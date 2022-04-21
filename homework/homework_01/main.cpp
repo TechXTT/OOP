@@ -243,6 +243,7 @@ public:
             if (this->products[i].Name() == name)
             {
                 this->products[i].setQuantity(this->products[i].Quantity() + quantity);
+                cout << "Successfully restocked" << name << endl;
                 return;
             }
         }
@@ -257,10 +258,17 @@ public:
         {
             if (this->products[i].Name() == name)
             {
-                if (this->products[i].Quantity() <= quantity)
+                if (this->products[i].Quantity() < quantity)
+                {
                     this->products[i].setQuantity(0);
+                    cout << "There aren't " << quantity << " " << name << " products in the store" << endl;
+                    cout << "Successfully bought " << this->products[i].Quantity() << " " << name << endl;
+                }
                 else
+                {
                     this->products[i].setQuantity(this->products[i].Quantity() - quantity);
+                    cout << "Successfully bought " << quantity << " " << name << endl;
+                }
                 return;
             }
         }
@@ -299,8 +307,16 @@ public:
         {
             if (this->products[i].Name() == name)
             {
-                this->products[i].setPrice(price);
-                return;
+                if (price > 0 && price != this->products[i].Price())
+                {
+                    this->products[i].setPrice(price);
+                    cout << "Successfully changed the price of " << name << endl;
+                    return;
+                }
+                else if (price <= 0)
+                    throw "Invalid price";
+                else if (price == this->products[i].Price())
+                    cout << "Price is already " << price << endl;
             }
         }
         throw "Product does not exist";
@@ -330,6 +346,7 @@ void CheckPrice(Store *store);
 void Restock(Store *store);
 void ChangePrice(Store *store);
 void BuyProduct(Store *store);
+void Revision(Store *store);
 
 int main()
 {
@@ -348,17 +365,12 @@ int main()
     cin >> rent;
     store = new Store(name, address, rent, type);
 
-    store->StoreInfo();
-
     while (true)
     {
         Options();
         cin >> option;
         switch (option)
         {
-        case 0:
-            Options();
-            break;
         case 1:
             AddProduct(store);
             break;
@@ -381,13 +393,16 @@ int main()
             store->StoreInfo();
             break;
         case 8:
+            Revision(store);
+            break;
+        case 9:
+            delete store;
             return 0;
         }
     }
 }
 void Options()
 {
-    cout << "0. List options" << endl;
     cout << "1. Add product" << endl;
     cout << "2. Check product quantity" << endl;
     cout << "3. Check product price" << endl;
@@ -395,7 +410,8 @@ void Options()
     cout << "5. Change product price" << endl;
     cout << "6. Buy product" << endl;
     cout << "7. Show shop's information" << endl;
-    cout << "8. Exit" << endl;
+    cout << "8. Revision" << endl;
+    cout << "9. Exit" << endl;
     cout << "Choose option: ";
 }
 
@@ -501,5 +517,15 @@ void BuyProduct(Store *store)
     catch (const char *msg)
     {
         cout << msg << endl;
+    }
+}
+
+void Revision(Store *store)
+{
+    vector<string> names = store->revision();
+
+    for (int i = 0; i < names.size(); i++)
+    {
+        cout << names[i] << endl;
     }
 }
