@@ -80,22 +80,25 @@ private:
     double rent;
     string type;
 
-    void check(string address, double rent, string type) const //Входните данни на конструктора с параметри трябва да бъдат валидирани
+    string check(string address, double rent, string type) const //Входните данни на конструктора с параметри трябва да бъдат валидирани
     {
         if (address.empty())
             throw "Address cannot be empty";
         if (rent <= 0) //Цената трябва да бъде положителна
             throw "Rent must be positive";
-        if (type != "supermarket" && type != "pharmacy" && type != "non-stop" && type != "other")
-            throw "Type cannot be empty";
+        if (type != "supermarket" && type != "pharmacy" && type != "non-stop")
+            return "other";
+        else
+            return type;
     }
 
 public:
     Property() {} //Конструктор по подразбиране // Не пишеше за конструктор по подразбиране но за всеки случай сложих
 
-    Property(string address, double rent, string type) : address(address), rent(rent), type(type) //Конструктор с параметри
+    Property(string address, double rent, string type) : address(address), rent(rent) //Конструктор с параметри
     {
         check(address, rent, type);
+        this->type = type;
     }
 
     Property(const Property &other) : address(other.address), rent(other.rent), type(other.type) //Копиращ конструктор
